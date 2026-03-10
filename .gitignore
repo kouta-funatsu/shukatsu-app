@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+#学習まとめ~アプリ開発で学んだこと~
+学習まとめ.md
+
 # dependencies
 /node_modules
 /.pnp
