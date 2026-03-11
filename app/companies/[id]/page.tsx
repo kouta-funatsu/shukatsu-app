@@ -72,6 +72,11 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
             マイページ情報
           </button>
         </Link>
+        <Link href={`/companies/${id}/schedules`}>
+          <button style={{ padding: '8px 16px', background: '#fbbc04', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+            スケジュール
+          </button>
+        </Link>
       </div>
     </div>
   )
