@@ -2,6 +2,8 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import Badge from '@/components/Badge'
+import PageHeader from '@/components/PageHeader'
 
 export default async function CompaniesPage() {
   const cookieStore = await cookies()
@@ -12,11 +14,7 @@ export default async function CompaniesPage() {
       cookies: {
         getAll() { return cookieStore.getAll() },
         setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {}
+          try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)) } catch {}
         },
       },
     }
@@ -31,33 +29,34 @@ export default async function CompaniesPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div style={{ padding: '40px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h1>企業一覧</h1>
-        <Link href="/companies/new">
-          <button style={{ padding: '8px 16px', background: '#4285f4', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-            ＋ 企業を追加
-          </button>
-        </Link>
-      </div>
-
-      {companies?.length === 0 && <p>まだ企業が登録されていません</p>}
-
-      <div style={{ display: 'grid', gap: '16px' }}>
-        {companies?.map((company) => (
-          <Link key={company.id} href={`/companies/${company.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div style={{ padding: '16px', border: '1px solid #ddd', borderRadius: '8px', cursor: 'pointer' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <h2 style={{ margin: 0 }}>{company.name}</h2>
-                <span style={{ background: '#e8f0fe', padding: '4px 8px', borderRadius: '4px', fontSize: '14px' }}>
-                  {company.status}
-                </span>
-              </div>
-              {company.industry && <p style={{ margin: '8px 0 0', color: '#666' }}>{company.industry}</p>}
-            </div>
+    <div className="max-w-3xl mx-auto px-4 py-8">
+      <PageHeader
+        title="企業一覧"
+        action={
+          <Link href="/companies/new">
+            <button className="bg-slate-800 text-white text-sm px-4 py-2 rounded-md hover:bg-slate-700 transition-colors">
+              ＋ 企業を追加
+            </button>
           </Link>
-        ))}
-      </div>
+        }
+      />
+
+      {companies?.length === 0
+        ? <p className="text-slate-400 text-center py-16">まだ企業が登録されていません</p>
+        : <div className="flex flex-col gap-2">
+            {companies?.map((company) => (
+              <Link key={company.id} href={`/companies/${company.id}`}>
+                <div className="bg-white px-5 py-4 rounded-lg shadow-sm border border-slate-100 flex justify-between items-center hover:shadow-md transition-shadow">
+                  <div>
+                    <span className="font-medium text-slate-800">{company.name}</span>
+                    {company.industry && <span className="ml-3 text-sm text-slate-400">{company.industry}</span>}
+                  </div>
+                  <Badge status={company.status} />
+                </div>
+              </Link>
+            ))}
+          </div>
+      }
     </div>
   )
 }

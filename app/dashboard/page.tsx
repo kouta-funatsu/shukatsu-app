@@ -12,11 +12,7 @@ export default async function DashboardPage() {
       cookies: {
         getAll() { return cookieStore.getAll() },
         setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            )
-          } catch {}
+          try { cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)) } catch {}
         },
       },
     }
@@ -25,11 +21,7 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const { data: companies } = await supabase
-    .from('companies')
-    .select('*')
-    .order('created_at', { ascending: false })
-
+  const { data: companies } = await supabase.from('companies').select('*').order('created_at', { ascending: false })
   const { data: schedules } = await supabase
     .from('schedules')
     .select('*, companies(name)')
@@ -45,55 +37,67 @@ export default async function DashboardPage() {
     見送り: companies?.filter(c => c.status === '見送り').length ?? 0,
   }
 
+  const statusColors: Record<string, string> = {
+    検討中: '#64748b',
+    ES提出: '#3b82f6',
+    選考中: '#f59e0b',
+    内定: '#10b981',
+    見送り: '#ef4444',
+  }
+
   return (
-    <div style={{ padding: '40px', maxWidth: '800px' }}>
-      <h1>ダッシュボード</h1>
-      <p style={{ color: '#666' }}>ようこそ、{user.email} さん</p>
-
-      {/* 選考状況サマリー */}
-      <h2 style={{ marginTop: '32px' }}>選考状況</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px', marginTop: '16px' }}>
-        {Object.entries(statusCount).map(([status, count]) => (
-          <div key={status} style={{ padding: '16px', border: '1px solid #ddd', borderRadius: '8px', textAlign: 'center' }}>
-            <div style={{ fontSize: '24px', fontWeight: 'bold' }}>{count}</div>
-            <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>{status}</div>
-          </div>
-        ))}
+    <div style={{ padding: '32px 24px', maxWidth: '900px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b' }}>ダッシュボード</h1>
+        <p style={{ color: '#64748b', marginTop: '4px', fontSize: '14px' }}>{user.email}</p>
       </div>
 
-      {/* 直近のスケジュール */}
-      <h2 style={{ marginTop: '32px' }}>直近のスケジュール</h2>
-      <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {schedules?.length === 0 && <p style={{ color: '#666' }}>予定はありません</p>}
-        {schedules?.map((schedule) => (
-          <Link key={schedule.id} href={`/companies/${schedule.company_id}/schedules`} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div style={{ padding: '12px 16px', border: '1px solid #ddd', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <strong>{schedule.title}</strong>
-                <span style={{ marginLeft: '8px', color: '#666', fontSize: '14px' }}>{schedule.companies?.name}</span>
-              </div>
-              <span style={{ color: '#666', fontSize: '14px' }}>
-                {new Date(schedule.date).toLocaleString('ja-JP')}
-              </span>
+      {/* 選考状況 */}
+      <section style={{ marginBottom: '32px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#475569', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>選考状況</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
+          {Object.entries(statusCount).map(([status, count]) => (
+            <div key={status} style={{ background: 'white', padding: '20px 16px', borderRadius: '8px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', borderTop: `3px solid ${statusColors[status]}` }}>
+              <div style={{ fontSize: '28px', fontWeight: 'bold', color: statusColors[status] }}>{count}</div>
+              <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>{status}</div>
             </div>
-          </Link>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 直近スケジュール */}
+      <section style={{ marginBottom: '32px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#475569', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>直近のスケジュール</h2>
+        <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', overflow: 'hidden' }}>
+          {schedules?.length === 0
+            ? <p style={{ padding: '24px', color: '#94a3b8', textAlign: 'center' }}>予定はありません</p>
+            : schedules?.map((schedule, i) => (
+              <Link key={schedule.id} href={`/companies/${schedule.company_id}/schedules`}>
+                <div style={{ padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: i < (schedules.length - 1) ? '1px solid #f1f5f9' : 'none' }}>
+                  <div>
+                    <span style={{ fontWeight: '500' }}>{schedule.title}</span>
+                    <span style={{ marginLeft: '8px', fontSize: '13px', color: '#94a3b8' }}>{schedule.companies?.name}</span>
+                  </div>
+                  <span style={{ fontSize: '13px', color: '#64748b' }}>{new Date(schedule.date).toLocaleString('ja-JP')}</span>
+                </div>
+              </Link>
+            ))
+          }
+        </div>
+      </section>
 
       {/* クイックリンク */}
-      <h2 style={{ marginTop: '32px' }}>クイックリンク</h2>
-      <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-        <Link href="/companies">
-          <button style={{ padding: '10px 20px', background: '#4285f4', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-            企業一覧
-          </button>
-        </Link>
-        <Link href="/companies/new">
-          <button style={{ padding: '10px 20px', background: '#34a853', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
-            企業を追加
-          </button>
-        </Link>
-      </div>
+      <section>
+        <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#475569', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>クイックリンク</h2>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <Link href="/companies">
+            <button style={{ padding: '10px 24px', background: '#1e293b', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>企業一覧</button>
+          </Link>
+          <Link href="/companies/new">
+            <button style={{ padding: '10px 24px', background: 'white', color: '#1e293b', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'pointer', fontSize: '14px' }}>＋ 企業を追加</button>
+          </Link>
+        </div>
+      </section>
     </div>
   )
 }
