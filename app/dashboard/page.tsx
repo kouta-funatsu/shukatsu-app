@@ -86,6 +86,21 @@ export default async function DashboardPage() {
         </div>
       </section>
 
+      {/* スケジュールへのリンク */}
+      <section style={{ marginBottom: '32px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#475569', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>スケジュール</h2>
+        <Link href="/schedule">
+          <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', padding: '20px', display: 'flex', alignItems: 'center', gap: '12px', color: '#1e293b' }}>
+            <span style={{ fontSize: '24px' }}>📅</span>
+            <div>
+              <div style={{ fontWeight: '500' }}>カレンダーで確認する</div>
+              <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '2px' }}>全企業のスケジュールを月表示・リスト表示で確認</div>
+            </div>
+            <span style={{ marginLeft: 'auto', color: '#94a3b8' }}>→</span>
+          </div>
+        </Link>
+      </section>
+
       {/* クイックリンク */}
       <section>
         <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#475569', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>クイックリンク</h2>

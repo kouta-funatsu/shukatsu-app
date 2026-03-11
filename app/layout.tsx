@@ -31,6 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </a>
           <a href="/companies" style={{ color: '#94a3b8', fontSize: '14px' }}>企業一覧</a>
           <a href="/companies/new" style={{ color: '#94a3b8', fontSize: '14px' }}>企業を追加</a>
+          <a href="/schedule" style={{ color: '#94a3b8', fontSize: '14px' }}>スケジュール</a>
           <LogoutButton />
         </nav>
         <main style={{ minHeight: 'calc(100vh - 56px)' }}>
