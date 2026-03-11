@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
+import LogoutButton from '@/components/LogoutButton'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </a>
           <a href="/companies" style={{ color: '#94a3b8', fontSize: '14px' }}>企業一覧</a>
           <a href="/companies/new" style={{ color: '#94a3b8', fontSize: '14px' }}>企業を追加</a>
+          <LogoutButton />
         </nav>
         <main style={{ minHeight: 'calc(100vh - 56px)' }}>
           {children}
