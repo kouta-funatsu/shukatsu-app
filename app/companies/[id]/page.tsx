@@ -67,6 +67,11 @@ export default async function CompanyDetailPage({ params }: { params: Promise<{ 
             編集
           </button>
         </Link>
+        <Link href={`/companies/${id}/accounts`}>
+          <button style={{ padding: '8px 16px', background: '#34a853', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+            マイページ情報
+          </button>
+        </Link>
       </div>
     </div>
   )
