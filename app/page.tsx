@@ -2,40 +2,38 @@ import Link from 'next/link'
 
 export default function TopPage() {
   return (
-    <div style={{ padding: '80px 40px', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-      <h1 style={{ fontSize: '32px', marginBottom: '16px' }}>就活管理アプリ</h1>
-      <p style={{ color: '#666', fontSize: '18px', marginBottom: '40px', lineHeight: '1.8' }}>
-        企業情報・マイページ・スケジュールを<br />一つの場所でまとめて管理
-      </p>
+    <div className="min-h-screen bg-slate-50">
+      <div className="max-w-3xl mx-auto px-4 py-24 text-center">
+        <h1 className="text-4xl font-bold text-slate-800 mb-4">就活管理アプリ</h1>
+        <p className="text-slate-500 text-lg mb-12 leading-relaxed">
+          企業情報・マイページ・スケジュールを<br />一つの場所でまとめて管理
+        </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-        <Link href="/login">
-          <button style={{ padding: '14px 48px', background: '#4285f4', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '16px' }}>
-            Googleでログイン
-          </button>
-        </Link>
-        <Link href="/dashboard">
-          <button style={{ padding: '14px 48px', background: 'white', color: '#4285f4', border: '2px solid #4285f4', borderRadius: '8px', cursor: 'pointer', fontSize: '16px' }}>
-            ダッシュボードへ
-          </button>
-        </Link>
-      </div>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-20">
+          <Link href="/login">
+            <button className="px-8 py-3 bg-slate-800 text-white text-sm font-medium rounded-md hover:bg-slate-700 transition-colors">
+              Googleでログイン
+            </button>
+          </Link>
+          <Link href="/dashboard">
+            <button className="px-8 py-3 bg-white text-slate-700 text-sm font-medium rounded-md border border-slate-200 hover:bg-slate-50 transition-colors">
+              ダッシュボードへ
+            </button>
+          </Link>
+        </div>
 
-      <div style={{ marginTop: '64px', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', textAlign: 'left' }}>
-        <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>🏢</div>
-          <h3 style={{ margin: '0 0 8px' }}>企業管理</h3>
-          <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>説明会メモ・選考状況・志望度を一元管理</p>
-        </div>
-        <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>🔑</div>
-          <h3 style={{ margin: '0 0 8px' }}>マイページ管理</h3>
-          <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>企業ごとのID・パスワードを安全に管理</p>
-        </div>
-        <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
-          <div style={{ fontSize: '24px', marginBottom: '8px' }}>📅</div>
-          <h3 style={{ margin: '0 0 8px' }}>スケジュール管理</h3>
-          <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>面接・説明会・締切を企業ごとに管理</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+          {[
+            { icon: '🏢', title: '企業管理', desc: '説明会メモ・選考状況・志望度を一元管理' },
+            { icon: '🔑', title: 'マイページ管理', desc: '企業ごとのID・パスワードを安全に管理' },
+            { icon: '📅', title: 'スケジュール管理', desc: '面接・説明会・締切を企業ごとに管理' },
+          ].map(item => (
+            <div key={item.title} className="bg-white rounded-lg border border-slate-100 shadow-sm p-5">
+              <div className="text-2xl mb-3">{item.icon}</div>
+              <h3 className="font-semibold text-slate-800 mb-1">{item.title}</h3>
+              <p className="text-sm text-slate-500">{item.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
