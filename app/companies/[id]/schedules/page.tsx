@@ -5,6 +5,9 @@ import { createClient } from '@/utils/supabase'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 
+const inputClass = "w-full px-3 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-300 mt-1"
+const labelClass = "text-sm font-medium text-slate-600"
+
 export default function SchedulesPage() {
   const supabase = createClient()
   const params = useParams()
@@ -12,24 +15,14 @@ export default function SchedulesPage() {
   const [schedules, setSchedules] = useState<any[]>([])
   const [showForm, setShowForm] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({
-    title: '',
-    date: '',
-    memo: '',
-  })
+  const [form, setForm] = useState({ title: '', date: '', memo: '' })
 
   const fetchSchedules = async () => {
-    const { data } = await supabase
-      .from('schedules')
-      .select('*')
-      .eq('company_id', id)
-      .order('date', { ascending: true })
+    const { data } = await supabase.from('schedules').select('*').eq('company_id', id).order('date', { ascending: true })
     if (data) setSchedules(data)
   }
 
-  useEffect(() => {
-    fetchSchedules()
-  }, [id])
+  useEffect(() => { fetchSchedules() }, [id])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -38,19 +31,9 @@ export default function SchedulesPage() {
   const handleSubmit = async () => {
     if (!form.title) return alert('タイトルを入力してください')
     setLoading(true)
-
-    const { error } = await supabase
-      .from('schedules')
-      .insert([{ ...form, company_id: id }])
-
-    if (error) {
-      alert('エラーが発生しました')
-      console.error(error)
-    } else {
-      setForm({ title: '', date: '', memo: '' })
-      setShowForm(false)
-      fetchSchedules()
-    }
+    const { error } = await supabase.from('schedules').insert([{ ...form, company_id: id }])
+    if (error) { alert('エラーが発生しました'); console.error(error) }
+    else { setForm({ title: '', date: '', memo: '' }); setShowForm(false); fetchSchedules() }
     setLoading(false)
   }
 
@@ -61,56 +44,40 @@ export default function SchedulesPage() {
   }
 
   return (
-    <div style={{ padding: '40px', maxWidth: '600px' }}>
-      <Link href={`/companies/${id}`}>← 企業詳細に戻る</Link>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '24px' }}>
-        <h1>スケジュール</h1>
+    <div className="max-w-xl mx-auto px-4 py-8">
+      <Link href={`/companies/${id}`} className="text-sm text-slate-500 hover:text-slate-700">← 企業詳細に戻る</Link>
+
+      <div className="flex justify-between items-center mt-4 mb-8">
+        <h1 className="text-2xl font-bold text-slate-800">スケジュール</h1>
         <button onClick={() => setShowForm(!showForm)}
-          style={{ padding: '8px 16px', background: '#4285f4', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+          className="px-4 py-2 bg-slate-800 text-white text-sm rounded-md hover:bg-slate-700 transition-colors">
           ＋ 追加
         </button>
       </div>
 
       {showForm && (
-        <div style={{ marginTop: '24px', padding: '16px', border: '1px solid #ddd', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div>
-            <label>タイトル *</label>
-            <input name="title" value={form.title} onChange={handleChange}
-              placeholder="例：一次面接、ES締切"
-              style={{ display: 'block', width: '100%', padding: '8px', marginTop: '4px', border: '1px solid #ddd', borderRadius: '4px' }} />
-          </div>
-          <div>
-            <label>日時</label>
-            <input name="date" type="datetime-local" value={form.date} onChange={handleChange}
-              style={{ display: 'block', width: '100%', padding: '8px', marginTop: '4px', border: '1px solid #ddd', borderRadius: '4px' }} />
-          </div>
-          <div>
-            <label>メモ</label>
-            <textarea name="memo" value={form.memo} onChange={handleChange} rows={3}
-              style={{ display: 'block', width: '100%', padding: '8px', marginTop: '4px', border: '1px solid #ddd', borderRadius: '4px' }} />
-          </div>
+        <div className="bg-white rounded-lg border border-slate-100 shadow-sm p-6 flex flex-col gap-4 mb-6">
+          <div><label className={labelClass}>タイトル *</label><input name="title" value={form.title} onChange={handleChange} placeholder="例：一次面接、ES締切" className={inputClass} /></div>
+          <div><label className={labelClass}>日時</label><input name="date" type="datetime-local" value={form.date} onChange={handleChange} className={inputClass} /></div>
+          <div><label className={labelClass}>メモ</label><textarea name="memo" value={form.memo} onChange={handleChange} rows={3} className={inputClass} /></div>
           <button onClick={handleSubmit} disabled={loading}
-            style={{ padding: '10px', background: '#4285f4', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>
+            className="w-full py-2 bg-slate-800 text-white text-sm rounded-md hover:bg-slate-700 transition-colors disabled:opacity-50">
             {loading ? '保存中...' : '保存する'}
           </button>
         </div>
       )}
 
-      <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {schedules.length === 0 && <p>まだ登録されていません</p>}
+      <div className="flex flex-col gap-3">
+        {schedules.length === 0 && <p className="text-slate-400 text-center py-12">まだ登録されていません</p>}
         {schedules.map((schedule) => (
-          <div key={schedule.id} style={{ padding: '16px', border: '1px solid #ddd', borderRadius: '8px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <strong>{schedule.title}</strong>
-              {schedule.date && (
-                <span style={{ color: '#666', fontSize: '14px' }}>
-                  {new Date(schedule.date).toLocaleString('ja-JP')}
-                </span>
-              )}
+          <div key={schedule.id} className="bg-white rounded-lg border border-slate-100 shadow-sm px-5 py-4">
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-slate-800">{schedule.title}</span>
+              {schedule.date && <span className="text-sm text-slate-400">{new Date(schedule.date).toLocaleString('ja-JP')}</span>}
             </div>
-            {schedule.memo && <p style={{ margin: '8px 0 0', color: '#666' }}>{schedule.memo}</p>}
+            {schedule.memo && <p className="text-sm text-slate-500 mt-2">{schedule.memo}</p>}
             <button onClick={() => handleDelete(schedule.id)}
-              style={{ marginTop: '12px', padding: '6px 12px', background: '#ea4335', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+              className="mt-3 px-3 py-1 bg-red-50 text-red-500 text-sm rounded-md hover:bg-red-100 transition-colors">
               削除
             </button>
           </div>
